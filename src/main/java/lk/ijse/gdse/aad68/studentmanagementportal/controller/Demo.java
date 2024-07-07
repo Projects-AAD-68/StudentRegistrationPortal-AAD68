@@ -16,6 +16,12 @@ import java.util.List;
 @WebServlet (urlPatterns = "/demo")
 public class Demo extends HttpServlet {
     @Override
+    public void init() throws ServletException {
+        var initParameter = getServletContext().getInitParameter("myparam");
+        System.out.println(initParameter);
+    }
+
+    @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         Jsonb jsonb = JsonbBuilder.create();
         List<StudentDTO> studentList = jsonb.fromJson(req.getReader(), new ArrayList<StudentDTO>() {
