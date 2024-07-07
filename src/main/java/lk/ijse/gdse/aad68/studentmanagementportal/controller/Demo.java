@@ -7,7 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lk.ijse.gdse.aad68.studentmanagementportal.dto.Student;
+import lk.ijse.gdse.aad68.studentmanagementportal.dto.StudentDTO;
 
 import java.io.IOException;
 import java.util.ArrayList;

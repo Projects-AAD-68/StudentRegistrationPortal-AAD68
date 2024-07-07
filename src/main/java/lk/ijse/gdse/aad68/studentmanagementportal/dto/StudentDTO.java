@@ -1,4 +1,4 @@
-package lk.ijse.gdse.aad68.studentmanagementportal.controller;
+package lk.ijse.gdse.aad68.studentmanagementportal.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
