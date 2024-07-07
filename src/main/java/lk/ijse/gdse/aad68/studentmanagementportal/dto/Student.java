@@ -1,6 +1,7 @@
 package lk.ijse.gdse.aad68.studentmanagementportal.dto;
 
 import jakarta.json.Json;
+import jakarta.json.JsonArray;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonReader;
 import jakarta.servlet.ServletException;
@@ -11,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @WebServlet(urlPatterns = "/student")
 public class Student extends HttpServlet {
@@ -22,9 +24,23 @@ public class Student extends HttpServlet {
         }
         //Process the JSON
         JsonReader reader = Json.createReader(req.getReader());
-        JsonObject jsonObject = reader.readObject();
-        String email = jsonObject.getString("email");
-        System.out.println(email);
+//        JsonObject jsonObject = reader.readObject();
+//        String email = jsonObject.getString("email");
+//        System.out.println(email);
+
+        //Optional - JSON array processing
+        JsonArray jsonArray = reader.readArray();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            var jsonObject = jsonArray.getJsonObject(i);
+            System.out.println(jsonObject.getString("name"));
+            System.out.println(jsonObject.getString("email"));
+        }
+
+//        //send data to the client
+//        var writer = resp.getWriter();
+//        writer.write(email);
+
+
 
 
 
