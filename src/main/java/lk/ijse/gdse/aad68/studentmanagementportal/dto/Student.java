@@ -28,7 +28,6 @@ public class Student extends HttpServlet {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
         //Object binding of the JSON
-
         Jsonb jsonb = JsonbBuilder.create();
         StudentDTO student = jsonb.fromJson(req.getReader(), StudentDTO.class);
         student.setId(Util.idGenerate());
