@@ -20,6 +20,7 @@ public class Student extends HttpServlet {
     public static String SAVE_STUDENT = "INSERT INTO student (id,name,email,city,level) VALUES(?,?,?,?,?)";
     public static String GET_STUDENT = "SELECT * FROM student WHERE id=?";
     public static String UPDATE_STUDENT = "UPDATE student SET name=?,email=?,city=?,level=? WHERE id=?";
+    public static String DELETE_STUDENT = "DELETE FROM student WHERE id=?";
     @Override
     public void init() throws ServletException {
         try {
@@ -105,20 +106,35 @@ public class Student extends HttpServlet {
             ps.setString(4, student.getLevel());
             ps.setString(5, studentId);
             if(ps.executeUpdate() != 0){
-                writer.write("Update Student Successfully");
                 resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }else {
                 writer.write("Update failed");
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
-        }catch (Exception e){
+        }catch (SQLException e){
             e.printStackTrace();
         }
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //Todo: Delete student
+        try (var writer = resp.getWriter()) {
+            var studentId = req.getParameter("studentId");
+
+            var ps = connection.prepareStatement(DELETE_STUDENT);
+            ps.setString(1, studentId);
+            if(ps.executeUpdate() != 0){
+                resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            }else {
+                writer.write("Delete failed");
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            }
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+
     }
 
 }
