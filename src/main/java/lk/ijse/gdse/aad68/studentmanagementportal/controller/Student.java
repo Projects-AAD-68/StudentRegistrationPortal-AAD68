@@ -11,13 +11,27 @@ import lk.ijse.gdse.aad68.studentmanagementportal.dto.StudentDTO;
 import lk.ijse.gdse.aad68.studentmanagementportal.util.Util;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
-@WebServlet(urlPatterns = "/student",loadOnStartup = 3)
+@WebServlet(urlPatterns = "/student")
 public class Student extends HttpServlet {
+    Connection connection;
     @Override
     public void init() throws ServletException {
-        var initParameter = getServletContext().getInitParameter("myparam");
-        System.out.println(initParameter);
+        try {
+            var dbClass = getServletContext().getInitParameter("db-class");
+            var dbUrl = getServletContext().getInitParameter("dburl");
+            var dbUserName = getServletContext().getInitParameter("db-username");
+            var dbPassword = getServletContext().getInitParameter("db-password");
+            Class.forName(dbClass);
+            this.connection = DriverManager.getConnection(dbUrl,dbUserName,dbPassword)
+        }catch (ClassNotFoundException | SQLException e){
+            e.printStackTrace();
+        }
+
+
     }
 
     @Override
