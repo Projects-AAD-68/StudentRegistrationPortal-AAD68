@@ -11,13 +11,16 @@ import lk.ijse.gdse.aad68.studentmanagementportal.dto.StudentDTO;
 import lk.ijse.gdse.aad68.studentmanagementportal.util.Util;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 @WebServlet(urlPatterns = "/student")
 public class Student extends HttpServlet {
     Connection connection;
+    public static String SAVE_STUDENT = "INSERT INTO student (id,name,email,city,level) VALUES(?,?,?,?,?)";
     @Override
     public void init() throws ServletException {
         try {
@@ -30,8 +33,6 @@ public class Student extends HttpServlet {
         }catch (ClassNotFoundException | SQLException e){
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -39,14 +40,30 @@ public class Student extends HttpServlet {
         if(req.getContentType() == null || !req.getContentType().toLowerCase().startsWith("application/json")){
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
-        //Object binding of the JSON
-        Jsonb jsonb = JsonbBuilder.create();
-        StudentDTO student = jsonb.fromJson(req.getReader(), StudentDTO.class);
-        student.setId(Util.idGenerate());
-        System.out.println(student);
-        //create response
-        resp.setContentType("application/json");
-        jsonb.toJson(student, resp.getWriter());
+        try (var writer = resp.getWriter()){
+            Jsonb jsonb = JsonbBuilder.create();
+            StudentDTO student = jsonb.fromJson(req.getReader(), StudentDTO.class);
+            student.setId(Util.idGenerate());
+            //Save data in the DB
+            var ps = connection.prepareStatement(SAVE_STUDENT);
+            ps.setString(1, student.getId());
+            ps.setString(2, student.getName());
+            ps.setString(3, student.getEmail());
+            ps.setString(4, student.getCity());
+            ps.setString(5, student.getLevel());
+            if(ps.executeUpdate() != 0){
+                resp.setStatus(HttpServletResponse.SC_CREATED);
+                writer.write("Save Student Successfully");
+
+            }else {
+                resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                writer.write("Failed to Save Student");
+            }
+        }catch (SQLException e){
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            e.printStackTrace();
+        }
+
 
     }
 
