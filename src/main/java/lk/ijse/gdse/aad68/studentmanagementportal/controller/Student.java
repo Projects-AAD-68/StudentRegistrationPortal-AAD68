@@ -12,15 +12,13 @@ import lk.ijse.gdse.aad68.studentmanagementportal.util.Util;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 
 @WebServlet(urlPatterns = "/student")
 public class Student extends HttpServlet {
     Connection connection;
     public static String SAVE_STUDENT = "INSERT INTO student (id,name,email,city,level) VALUES(?,?,?,?,?)";
+    public static String GET_STUDENT = "SELECT * FROM student WHERE id=?";
     @Override
     public void init() throws ServletException {
         try {
@@ -66,10 +64,28 @@ public class Student extends HttpServlet {
 
 
     }
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //Todo: Get student
+        try(var writer = resp.getWriter()) {
+            StudentDTO studentDTO = new StudentDTO();
+            Jsonb jsonb = JsonbBuilder.create();
+            var studentId = req.getParameter("studentId");
+            var ps = connection.prepareStatement(GET_STUDENT);
+            ps.setString(1, studentId);
+            var rst = ps.executeQuery();
+            while (rst.next()){
+                studentDTO.setId(rst.getString("id"));
+                studentDTO.setName(rst.getString("name"));
+                studentDTO.setEmail(rst.getString("email"));
+                studentDTO.setCity(rst.getString("city"));
+                studentDTO.setLevel(rst.getString("level"));
+            }
+            resp.setContentType("application/json");
+            jsonb.toJson(studentDTO,writer);
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
