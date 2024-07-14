@@ -26,7 +26,7 @@ public class Student extends HttpServlet {
             var dbUserName = getServletContext().getInitParameter("db-username");
             var dbPassword = getServletContext().getInitParameter("db-password");
             Class.forName(dbClass);
-            this.connection = DriverManager.getConnection(dbUrl,dbUserName,dbPassword)
+            this.connection = DriverManager.getConnection(dbUrl,dbUserName,dbPassword);
         }catch (ClassNotFoundException | SQLException e){
             e.printStackTrace();
         }
