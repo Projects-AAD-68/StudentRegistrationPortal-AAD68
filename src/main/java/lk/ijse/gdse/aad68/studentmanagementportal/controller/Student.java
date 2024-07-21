@@ -11,11 +11,11 @@ import lk.ijse.gdse.aad68.studentmanagementportal.dto.StudentDTO;
 import lk.ijse.gdse.aad68.studentmanagementportal.util.Util;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.*;
 
 @WebServlet(urlPatterns = "/student")
 public class Student extends HttpServlet {
+
     Connection connection;
     public static String SAVE_STUDENT = "INSERT INTO student (id,name,email,city,level) VALUES(?,?,?,?,?)";
     public static String GET_STUDENT = "SELECT * FROM student WHERE id=?";
