@@ -23,7 +23,6 @@ import java.sql.*;
 public class Student extends HttpServlet {
     static Logger logger = LoggerFactory.getLogger(Student.class);
     Connection connection;
-    public static String DELETE_STUDENT = "DELETE FROM student WHERE id=?";
     @Override
     public void init() throws ServletException {
         logger.info("Init method invoked");
@@ -43,16 +42,20 @@ public class Student extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if(req.getContentType() == null || !req.getContentType().toLowerCase().startsWith("application/json")){
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+            logger.error("Request not matched with the criteria");
         }
         try (var writer = resp.getWriter()){
             Jsonb jsonb = JsonbBuilder.create();
             var studentBOIMPL = new StudentBOIMPL();
             StudentDTO student = jsonb.fromJson(req.getReader(), StudentDTO.class);
+            logger.info("Invoke idGenerate()");
             student.setId(Util.idGenerate());
             //Save data in the DB
             writer.write(studentBOIMPL.saveStudent(student,connection));
+            logger.info("Student saved successfully");
             resp.setStatus(HttpServletResponse.SC_CREATED);
         }catch (Exception e){
+            logger.error("Connection failed");
             resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace();
         }
