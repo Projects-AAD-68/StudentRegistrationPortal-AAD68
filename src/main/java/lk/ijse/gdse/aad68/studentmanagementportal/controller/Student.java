@@ -22,7 +22,6 @@ import java.sql.*;
 public class Student extends HttpServlet {
     static Logger logger = LoggerFactory.getLogger(Student.class);
     Connection connection;
-    public static String GET_STUDENT = "SELECT * FROM student WHERE id=?";
     public static String UPDATE_STUDENT = "UPDATE student SET name=?,email=?,city=?,level=? WHERE id=?";
     public static String DELETE_STUDENT = "DELETE FROM student WHERE id=?";
     @Override
@@ -77,24 +76,17 @@ public class Student extends HttpServlet {
     @Override
     protected void doPatch(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try (var writer = resp.getWriter()) {
+            var studentDAOIMPL = new StudentDAOIMPL();
             var studentId = req.getParameter("studentId");
             Jsonb jsonb = JsonbBuilder.create();
             StudentDTO student = jsonb.fromJson(req.getReader(), StudentDTO.class);
-
-            //SQL process
-            var ps = connection.prepareStatement(UPDATE_STUDENT);
-            ps.setString(1, student.getName());
-            ps.setString(2, student.getEmail());
-            ps.setString(3, student.getCity());
-            ps.setString(4, student.getLevel());
-            ps.setString(5, studentId);
-            if(ps.executeUpdate() != 0){
+            if(studentDAOIMPL.updateStudent(studentId,student,connection)){
                 resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
             }else {
                 writer.write("Update failed");
                 resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
-        }catch (SQLException e){
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
